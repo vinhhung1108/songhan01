@@ -19,7 +19,9 @@ export default function ShowPage() {
     setSelectedOption(option);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData);
@@ -33,6 +35,7 @@ export default function ShowPage() {
       alert(result.message);
     } catch (error) {
       alert("Có lỗi xảy ra, vui lòng thử lại!");
+      console.error("Error submitting form:", error);
     }
   };
 
