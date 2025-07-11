@@ -7,18 +7,33 @@ import {
   AcademicCapIcon,
   CreditCardIcon,
 } from "@heroicons/react/24/outline";
+import { videoConfig } from "@/config";
+import VideoPlayer from "@/components/VideoPlayer";
+import CreditCardForm from "@/components/CreditCardForm";
+import Marquee from "@/components/Marquee";
 
 export default function ShowPage() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
-  const handleOptionClick = (option: string) => {
+  const handleOptionClick = (option: string): void => {
     setSelectedOption(option);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    // Xử lý logic gửi form ở đây (gửi API hoặc thông báo)
-    alert("Thông tin đã được gửi!");
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData);
+    try {
+      const response = await fetch("/api/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      alert(result.message);
+    } catch (error) {
+      alert("Có lỗi xảy ra, vui lòng thử lại!");
+    }
   };
 
   return (
@@ -79,7 +94,7 @@ export default function ShowPage() {
           >
             <CreditCardIcon className="w-12 h-12 flex-shrink-0 mt-1" />
             <span className="text-left">
-              Đăng ký mở thẻ
+              Mở thẻ
               <br />
               tín dụng/Tài khoản
             </span>
@@ -88,144 +103,28 @@ export default function ShowPage() {
         </div>
 
         {/* Content Display */}
-        <div className="w-full max-w-4xl mt-12">
+        <div className="w-full max-w-4xl mt-2">
           {selectedOption === "hospital" && (
-            <div className="bg-white bg-opacity-90 rounded-2xl p-6 shadow-xl">
-              <h3 className="text-xl md:text-xl font-bold text-gray-800 mb-4 text-center">
-                Hướng dẫn thanh toán viện phí
-              </h3>
-              <div className="relative aspect-w-16 aspect-h-9">
-                <iframe
-                  className="w-full h-[300px] md:h-[450px] rounded-lg shadow-md"
-                  src="https://www.youtube.com/embed/sample-video-id"
-                  title="Hướng dẫn thanh toán viện phí"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
+            <VideoPlayer
+              videoId={videoConfig.hospital}
+              title="Hướng dẫn thanh toán viện phí"
+            />
           )}
 
           {selectedOption === "school" && (
-            <div className="bg-white bg-opacity-90 rounded-2xl p-6 shadow-xl">
-              <h3 className="text-xl md:text-xl font-bold text-gray-800 mb-4 text-center">
-                Hướng dẫn thanh toán học phí
-              </h3>
-              <div className="relative aspect-w-16 aspect-h-9">
-                <iframe
-                  className="w-full h-[300px] md:h-[450px] rounded-lg shadow-md"
-                  src="https://www.youtube.com/embed/sample-video-id"
-                  title="Hướng dẫn thanh toán học phí"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
+            <VideoPlayer
+              videoId={videoConfig.school}
+              title="Hướng dẫn thanh toán học phí"
+            />
           )}
 
           {selectedOption === "card" && (
-            <div className="bg-white bg-opacity-90 rounded-2xl p-8 shadow-xl">
-              <h3 className="text-xl md:text-xl font-bold text-gray-800 mb-4 text-center">
-                Đăng ký mở thẻ tín dụng/Tài khoản
-              </h3>
-              <form
-                onSubmit={handleSubmit}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6"
-              >
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Số CCCD
-                  </label>
-                  <input
-                    name="cccd"
-                    type="text"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    placeholder="Nhập số CCCD"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ngày cấp
-                  </label>
-                  <input
-                    name="issueDate"
-                    type="date"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ngày hết hạn
-                  </label>
-                  <input
-                    name="expiryDate"
-                    type="date"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ngày sinh
-                  </label>
-                  <input
-                    name="birthDate"
-                    type="date"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Họ tên
-                  </label>
-                  <input
-                    name="fullName"
-                    type="text"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    placeholder="Nhập họ tên"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email
-                  </label>
-                  <input
-                    name="email"
-                    type="email"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    placeholder="Nhập email"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Số điện thoại
-                  </label>
-                  <input
-                    name="phone"
-                    type="tel"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    placeholder="Nhập số điện thoại"
-                    required
-                  />
-                </div>
-                <div className="md:col-span-2 flex justify-center">
-                  <button
-                    type="submit"
-                    className="bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 px-8 rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transform hover:scale-105 transition-all duration-300"
-                  >
-                    Gửi thông tin
-                  </button>
-                </div>
-              </form>
-            </div>
+            <CreditCardForm onSubmit={handleSubmit} />
           )}
         </div>
       </div>
+      {/* {selectedOption === null && <Marquee />} */}
+      <Marquee />
     </div>
   );
 }
